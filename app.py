@@ -30,7 +30,7 @@ ssd = st.selectbox('SSD (GB)', sorted(df['SSD'].unique()))
 gpu = st.selectbox('GPU Brand', df['Gpu brand'].unique())
 os = st.selectbox('Operating System', df['os'].unique())
 
-# Handle categorical yes/no
+# Handle yes/no fields
 touchscreen_val = 1 if touchscreen == 'Yes' else 0
 ips_val = 1 if ips == 'Yes' else 0
 
@@ -38,27 +38,29 @@ ips_val = 1 if ips == 'Yes' else 0
 x_res, y_res = map(int, resolution.split('x'))
 ppi = ((x_res**2 + y_res**2)**0.5) / screen_size
 
+# Define input column order EXACTLY as expected
+input_features = ['Company', 'TypeName', 'Ram', 'Weight', 'Touchscreen',
+                  'Ips', 'PPI', 'Cpu brand', 'HDD', 'SSD', 'Gpu brand', 'os']
+
 # Predict button
 if st.button('🔮 Predict Price'):
-    # Prepare the input DataFrame with correct column names
-    input_df = pd.DataFrame([{
-        'Company': company,
-        'TypeName': laptop_type,
-        'Ram': ram,
-        'Weight': weight,
-        'Touchscreen': touchscreen_val,
-        'Ips': ips_val,
-        'PPI': ppi,
-        'Cpu brand': cpu,
-        'HDD': hdd,
-        'SSD': ssd,
-        'Gpu brand': gpu,
-        'os': os
-    }])
-
     try:
+        # Prepare input DataFrame
+        input_df = pd.DataFrame([[company, laptop_type, ram, weight, touchscreen_val,
+                                  ips_val, ppi, cpu, hdd, ssd, gpu, os]],
+                                columns=input_features)
+
+        # Debug: Show the input features and data types
+        st.subheader("🧪 Input Sent to Model:")
+        st.dataframe(input_df)
+        st.code(str(input_df.dtypes), language='python')
+
+        # Prediction
         prediction = pipe.predict(input_df)[0]
-        final_price = np.exp(prediction)  # If model was trained on log(price)
+        final_price = np.exp(prediction)  # Reverse log1p if log was used
+
         st.success(f"💰 Estimated Laptop Price: ₹{round(final_price, 2):,}")
+
     except Exception as e:
-        st.error(f"❌ Prediction Error:\n{e}")
+        st.error("❌ Prediction Error. See below:")
+        st.exception(e)
