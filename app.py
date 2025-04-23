@@ -8,44 +8,11 @@ st.set_page_config(page_title="Laptop Price Predictor", layout="centered")
 
 pipe = pickle.load(open('pipe.pkl', 'rb'))
 df = pickle.load(open('df.pkl', 'rb'))
-st.markdown(
-    """
-    <style>
-    body {
-        background-color: #f0f0f5;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
-st.markdown("## 💻 Laptop Price Prediction")
+st.markdown("## Laptop Price Prediction")
 st.write("Fill the details below to predict laptop price:")
 
-st.sidebar.markdown(""" ## INSTRUCTION :
-RAM : 
-1. Please Select the Ram 4 or greater than 4 (2 gb ram is not available in market)
-2. Apple laptop have Ram Greater than  and Equal to the 8 GB .
-Laptop Type :
-1. Apple do not offer 2-in-1 Convertible and Netbook.
-2. Dell do not offer Netbook.
-3. Chuwi do not offer Gaming and Workstation.
-4. MSI do not offer Netbook and 2-in-1 Convertible.
-5. Microsoft do not offer Netbook and Workstation.
-6. Toshiba do not offer Gaming .
-7. Huawei do not offer Netbook, Gaming,Workstation.
-8. Vero do not offer Netbook,Gaming,2-in-1 Convertible,Workstation.
-9. Razer do not offer Netbook and 2-in-1 Convertible.
-Mediacom do not offer Ultrabook, Netbook, Gaming, and Workstation.
-
-Samsung do not offer Netbook and Workstation.
-
-Google do not offer Netbook, Gaming, and Workstation.
-
-Fujitsu do not offer Gaming and Workstation.
-
-LG do not offer Netbook, Gaming, and Workstation.
-
+st.sidebar.markdown("""
 ## About this App
 This app predicts the price of a laptop based on several features such as brand, RAM, CPU, screen size, and more.
 It uses a machine learning model that has been trained on historical laptop data.
@@ -57,6 +24,27 @@ Fill in the details and get an estimated price for your laptop!
 3. Enter specifications such as RAM size, screen size, etc.
 4. Hit the "Predict Price" button to get an estimated laptop price
 
+## INSTRUCTION :
+## CPU :
+  ....Apple uses its own CPUs now — called M1, M2, M3 series.
+#RAM : 
+1. Please Select the Ram 4 or greater than 4 (2 gb ram is not available in market)
+2. Apple laptop have Ram Greater than  and Equal to the 8 GB .\n\n
+#Laptop Type :
+1. Apple do not offer 2-in-1 Convertible and Netbook.
+2. Dell do not offer Netbook.
+3. Chuwi do not offer Gaming and Workstation.
+4. MSI do not offer Netbook and 2-in-1 Convertible.
+5. Microsoft do not offer Netbook and Workstation.
+6. Toshiba do not offer Gaming .
+7. Huawei do not offer Netbook, Gaming,Workstation.
+8. Vero do not offer Netbook,Gaming,2-in-1 Convertible,Workstation.
+9. Razer do not offer Netbook and 2-in-1 Convertible.
+10. Mediacom do not offer Ultrabook, Netbook, Gaming, and Workstation.
+11. Samsung do not offer Netbook and Workstation.
+12. Google do not offer Netbook, Gaming, and Workstation.
+13. Fujitsu do not offer Gaming and Workstation.
+14. LG do not offer Netbook, Gaming, and Workstation.
 
 ## Model Description
 This app uses a machine learning model built on a dataset of historical laptop prices. 
@@ -66,9 +54,6 @@ The training process uses a **Random Forest Regressor** to estimate the price ac
 ## Disclaimer
 The predicted price is an estimate and may not reflect the actual market price. Prices vary by region and seller.
 This app is for educational purposes only.
-
-
-
 """)
 
 company = st.selectbox('Brand', ['Select...'] + list(df['Company'].unique()))
