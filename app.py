@@ -1,27 +1,46 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import pickle
+
+# Set Streamlit page config
+st.set_page_config(page_title="Laptop Price Predictor", page_icon="💻", layout="centered")
+
+# Load the trained pipeline
+pipe = pickle.load(open('pipe.pkl', 'rb'))
+df = pickle.load(open('df.pkl', 'rb'))
+
+# Title
+st.markdown("## 💻 Laptop Price Prediction")
+st.write("Fill the details below to predict laptop price:")
+
+# Dropdown and input fields (First option set to 'Select...')
+company = st.selectbox('Brand', ['Select...'] + list(df['Company'].unique()))
+laptop_type = st.selectbox('Laptop Type', ['Select...'] + list(df['TypeName'].unique()))
+ram = st.selectbox('RAM (in GB)', ['Select...'] + sorted(df['Ram'].unique()))
+weight = st.number_input('Weight (kg)', min_value=0.5, max_value=5.0, step=0.1)
+touchscreen = st.selectbox('Touchscreen', ['Select...', 'Yes', 'No'])
+ips = st.selectbox('IPS Display', ['Select...', 'Yes', 'No'])
+screen_size = st.number_input('Screen Size (inches)', min_value=10.0, max_value=18.0, step=0.1)
+resolution = st.selectbox('Screen Resolution', ['Select...', '1920x1080', '1366x768', '1600x900', '3840x2160', '3200x1800'])
+
+cpu = st.selectbox('CPU', ['Select...'] + list(df['Cpu brand'].unique()))
+hdd = st.selectbox('HDD (GB)', ['Select...'] + list(df['HDD'].unique()))
+ssd = st.selectbox('SSD (GB)', ['Select...'] + list(df['SSD'].unique()))
+gpu = st.selectbox('GPU Brand', ['Select...'] + list(df['Gpu brand'].unique()))
+os = st.selectbox('Operating System', ['Select...'] + list(df['os'].unique()))
+
 # Preprocessing
-if touchscreen == 'Yes':
-    touchscreen = 1
-elif touchscreen == 'No':
-    touchscreen = 0
+touchscreen = 1 if touchscreen == 'Yes' else 0
+ips = 1 if ips == 'Yes' else 0
 
-if ips == 'Yes':
-    ips = 1
-elif ips == 'No':
-    ips = 0
-
-# Validate before processing resolution
-if resolution != 'Select...':
-    x_res, y_res = map(int, resolution.split('x'))
-    ppi = ((x_res**2 + y_res**2)**0.5) / screen_size
-else:
-    ppi = 0  # If resolution is not selected, set ppi to a default value (0)
-
-# Handle invalid HDD and SSD values (make sure they're integers)
-hdd = int(hdd) if hdd != 'Select...' else 0
-ssd = int(ssd) if ssd != 'Select...' else 0
+# Calculate PPI
+x_res, y_res = map(int, resolution.split('x')) if resolution != 'Select...' else (0, 0)
+ppi = ((x_res**2 + y_res**2)**0.5) / screen_size if resolution != 'Select...' else 0
 
 # Predict button
 if st.button('🔮 Predict Price'):
+    # Check if all dropdowns have been selected
     if 'Select...' in [company, laptop_type, ram, touchscreen, ips, resolution, cpu, hdd, ssd, gpu, os]:
         st.warning("⚠️ Please make sure all dropdowns are selected.")
     else:
