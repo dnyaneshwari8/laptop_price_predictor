@@ -2,7 +2,16 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
-
+st.markdown(
+    """
+    <style>
+    body {
+        background-color: #f0f0f5;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 st.set_page_config(page_title="Laptop Price Predictor", layout="centered")
 
 pipe = pickle.load(open('pipe.pkl', 'rb'))
