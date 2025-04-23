@@ -1,34 +1,3 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import pickle
-
-# Set Streamlit page config
-st.set_page_config(page_title="Laptop Price Predictor", page_icon="💻", layout="centered")
-
-# Load the trained pipeline
-pipe = pickle.load(open('pipe.pkl', 'rb'))
-df = pickle.load(open('df.pkl', 'rb'))
-
-# Title
-st.markdown("## 💻 Laptop Price Prediction")
-st.write("Fill the details below to predict laptop price:")
-
-# Dropdown and input fields
-company = st.selectbox('Brand', ['Select...'] + list(df['Company'].unique()))
-laptop_type = st.selectbox('Laptop Type', ['Select...'] + list(df['TypeName'].unique()))
-ram = st.selectbox('RAM (in GB)', ['Select...'] + sorted(df['Ram'].unique()))
-weight = st.number_input('Weight (kg)', min_value=0.5, max_value=5.0, step=0.1)
-touchscreen = st.selectbox('Touchscreen', ['Select...', 'Yes', 'No'])
-ips = st.selectbox('IPS Display', ['Select...', 'Yes', 'No'])
-screen_size = st.number_input('Screen Size (inches)', min_value=10.0, max_value=18.0, step=0.1)
-resolution = st.selectbox('Screen Resolution', ['Select...', '1920x1080', '1366x768', '1600x900', '3840x2160', '3200x1800'])
-cpu = st.selectbox('CPU', ['Select...'] + list(df['Cpu brand'].unique()))
-hdd = st.selectbox('HDD (GB)', ['Select...'] + list(df['HDD'].unique()))
-ssd = st.selectbox('SSD (GB)', ['Select...'] + list(df['SSD'].unique()))
-gpu = st.selectbox('GPU Brand', ['Select...'] + list(df['Gpu brand'].unique()))
-os = st.selectbox('Operating System', ['Select...'] + list(df['os'].unique()))
-
 # Preprocessing
 if touchscreen == 'Yes':
     touchscreen = 1
@@ -45,7 +14,11 @@ if resolution != 'Select...':
     x_res, y_res = map(int, resolution.split('x'))
     ppi = ((x_res**2 + y_res**2)**0.5) / screen_size
 else:
-    ppi = 0
+    ppi = 0  # If resolution is not selected, set ppi to a default value (0)
+
+# Handle invalid HDD and SSD values (make sure they're integers)
+hdd = int(hdd) if hdd != 'Select...' else 0
+ssd = int(ssd) if ssd != 'Select...' else 0
 
 # Predict button
 if st.button('🔮 Predict Price'):
@@ -54,7 +27,7 @@ if st.button('🔮 Predict Price'):
     else:
         # Prepare input as DataFrame (important for pipeline compatibility)
         input_df = pd.DataFrame([[company, laptop_type, int(ram), weight, touchscreen, ips,
-                                  ppi, cpu, int(hdd), int(ssd), gpu, os]],
+                                  ppi, cpu, hdd, ssd, gpu, os]],
                                 columns=['Company', 'TypeName', 'Ram', 'Weight', 'Touchscreen',
                                          'Ips', 'ppi', 'Cpu brand', 'HDD', 'SSD', 'Gpu brand', 'os'])
 
