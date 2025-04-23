@@ -3,18 +3,17 @@ import pandas as pd
 import numpy as np
 import pickle
 
-# Set Streamlit page config
-st.set_page_config(page_title="Laptop Price Predictor", page_icon="💻", layout="centered")
+st.set_page_config(page_title="Laptop Price Predictor", layout="centered")
 
-# Load the trained pipeline
 pipe = pickle.load(open('pipe.pkl', 'rb'))
 df = pickle.load(open('df.pkl', 'rb'))
 
-# Title
+
 st.markdown("## 💻 Laptop Price Prediction")
 st.write("Fill the details below to predict laptop price:")
 
-# Dropdown and input fields (First option set to 'Select...')
+st.sidebar.markdown(" laptop price prediction ")
+
 company = st.selectbox('Brand', ['Select...'] + list(df['Company'].unique()))
 laptop_type = st.selectbox('Laptop Type', ['Select...'] + list(df['TypeName'].unique()))
 ram = st.selectbox('RAM (in GB)', ['Select...'] + sorted(df['Ram'].unique()))
@@ -42,7 +41,7 @@ ppi = ((x_res**2 + y_res**2)**0.5) / screen_size if resolution != 'Select...' el
 if st.button('🔮 Predict Price'):
     # Check if all dropdowns have been selected
     if 'Select...' in [company, laptop_type, ram, touchscreen, ips, resolution, cpu, hdd, ssd, gpu, os]:
-        st.warning("⚠️ Please make sure all dropdowns are selected.")
+        st.warning(" Please make sure all dropdowns are selected.")
     else:
         # Prepare input as DataFrame (important for pipeline compatibility)
         input_df = pd.DataFrame([[company, laptop_type, int(ram), weight, touchscreen, ips,
@@ -54,6 +53,6 @@ if st.button('🔮 Predict Price'):
         try:
             prediction = pipe.predict(input_df)[0]
             final_price = np.exp(prediction)  # Reverse log transform
-            st.success(f"💰 Estimated Laptop Price: ₹{round(final_price, 2):,}")
+            st.success(f" ....Estimated Laptop Price: ₹{round(final_price, 2):,}")
         except Exception as e:
-            st.error(f"❌ Prediction Error: {e}")
+            st.error(f" Prediction Error: {e}")
