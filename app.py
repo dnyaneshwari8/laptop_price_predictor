@@ -26,11 +26,6 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-
-# 📦 Load model and data
-pipe = pickle.load(open('pipe.pkl', 'rb'))
-df = pickle.load(open('df.pkl', 'rb'))
-
 # 🖼️ App header
 st.image("https://cdn-icons-png.flaticon.com/512/1055/1055687.png", width=80)
 st.markdown("<h1 style='text-align: center;'>Laptop Price Predictor 💻</h1>", unsafe_allow_html=True)
