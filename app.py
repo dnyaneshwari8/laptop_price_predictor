@@ -2,6 +2,12 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
+
+
+st.set_page_config(page_title="Laptop Price Predictor", layout="centered")
+
+pipe = pickle.load(open('pipe.pkl', 'rb'))
+df = pickle.load(open('df.pkl', 'rb'))
 st.markdown(
     """
     <style>
@@ -12,11 +18,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.set_page_config(page_title="Laptop Price Predictor", layout="centered")
-
-pipe = pickle.load(open('pipe.pkl', 'rb'))
-df = pickle.load(open('df.pkl', 'rb'))
-
 
 st.markdown("## 💻 Laptop Price Prediction")
 st.write("Fill the details below to predict laptop price:")
