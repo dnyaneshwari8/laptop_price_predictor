@@ -98,7 +98,7 @@ if st.button('🔮 Predict Price'):
             # Manual adjustment if touchscreen = Yes
             if touchscreen == 1:
                 final_price += 9000
-                st.caption("📱 Touchscreen detected — added ₹9000 to match real-world pricing.")
+                
 
             st.success(f"🎯 Estimated Laptop Price: ₹{round(final_price, 2):,}")
         except Exception as e:
