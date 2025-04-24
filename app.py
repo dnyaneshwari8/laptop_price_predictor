@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import pickle
 
-
 st.set_page_config(page_title="Laptop Price Predictor", layout="centered")
 
 pipe = pickle.load(open('pipe.pkl', 'rb'))
@@ -60,7 +59,7 @@ company = st.selectbox('Brand', ['Select...'] + list(df['Company'].unique()))
 laptop_type = st.selectbox('Laptop Type', ['Select...'] + list(df['TypeName'].unique()))
 ram = st.selectbox('RAM (in GB)', ['Select...'] + sorted(df['Ram'].unique()))
 weight = st.number_input('Weight (kg)', min_value=0.5, max_value=5.0, step=0.1)
-touchscreen = st.selectbox('Touchscreen', ['Select...', 'Yes', 'No'])
+touchscreen_option = st.selectbox('Touchscreen', ['Select...', 'Yes', 'No'])  # keep string version for logic
 ips = st.selectbox('IPS Display', ['Select...', 'Yes', 'No'])
 screen_size = st.number_input('Screen Size (inches)', min_value=10.0, max_value=18.0, step=0.1)
 resolution = st.selectbox('Screen Resolution', ['Select...', '1920x1080', '1366x768', '1600x900', '3840x2160', '3200x1800'])
@@ -71,8 +70,8 @@ ssd = st.selectbox('SSD (GB)', ['Select...'] + list(df['SSD'].unique()))
 gpu = st.selectbox('GPU Brand', ['Select...'] + list(df['Gpu brand'].unique()))
 os = st.selectbox('Operating System', ['Select...'] + list(df['os'].unique()))
 
-# Preprocessing
-touchscreen = 1 if touchscreen == 'Yes' else 0
+# Convert to binary
+touchscreen = 1 if touchscreen_option == 'Yes' else 0
 ips = 1 if ips == 'Yes' else 0
 
 # Calculate PPI
@@ -82,10 +81,10 @@ ppi = ((x_res**2 + y_res**2)**0.5) / screen_size if resolution != 'Select...' el
 # Predict button
 if st.button('🔮 Predict Price'):
     # Check if all dropdowns have been selected
-    if 'Select...' in [company, laptop_type, ram, touchscreen, ips, resolution, cpu, hdd, ssd, gpu, os]:
-        st.warning(" Please make sure all dropdowns are selected.")
+    if 'Select...' in [company, laptop_type, ram, touchscreen_option, ips, resolution, cpu, hdd, ssd, gpu, os]:
+        st.warning("⚠️ Please make sure all dropdowns are selected.")
     else:
-        # Prepare input as DataFrame (important for pipeline compatibility)
+        # Prepare input as DataFrame
         input_df = pd.DataFrame([[company, laptop_type, int(ram), weight, touchscreen, ips,
                                   ppi, cpu, hdd, ssd, gpu, os]],
                                 columns=['Company', 'TypeName', 'Ram', 'Weight', 'Touchscreen',
@@ -95,6 +94,12 @@ if st.button('🔮 Predict Price'):
         try:
             prediction = pipe.predict(input_df)[0]
             final_price = np.exp(prediction)  # Reverse log transform
-            st.success(f" ....Estimated Laptop Price: ₹{round(final_price, 2):,}")
+
+            # Manual adjustment if touchscreen = Yes
+            if touchscreen == 1:
+                final_price += 9000
+                st.caption("📱 Touchscreen detected — added ₹9000 to match real-world pricing.")
+
+            st.success(f"🎯 Estimated Laptop Price: ₹{round(final_price, 2):,}")
         except Exception as e:
-            st.error(f" Prediction Error: {e}")
+            st.error(f"❌ Prediction Error: {e}")
