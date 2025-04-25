@@ -79,10 +79,10 @@ x_res, y_res = map(int, resolution.split('x')) if resolution != 'Select...' else
 ppi = ((x_res**2 + y_res**2)**0.5) / screen_size if resolution != 'Select...' else 0
 
 # Predict button
-if st.button('🔮 Predict Price'):
+if st.button('## Predict Price'):
     # Check if all dropdowns have been selected
     if 'Select...' in [company, laptop_type, ram, touchscreen_option, ips, resolution, cpu, hdd, ssd, gpu, os]:
-        st.warning("⚠️ Please make sure all dropdowns are selected.")
+        st.warning(" Please make sure all dropdowns are selected.")
     else:
         # Prepare input as DataFrame
         input_df = pd.DataFrame([[company, laptop_type, int(ram), weight, touchscreen, ips,
@@ -100,6 +100,6 @@ if st.button('🔮 Predict Price'):
                 final_price += 9000
                 
 
-            st.success(f"🎯 Estimated Laptop Price: ₹{round(final_price, 2):,}")
+            st.success(f"## Estimated Laptop Price: ₹{round(final_price, 2):,}")
         except Exception as e:
-            st.error(f"❌ Prediction Error: {e}")
+            st.error(f"Prediction Error: {e}")
